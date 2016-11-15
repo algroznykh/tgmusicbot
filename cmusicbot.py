@@ -16,6 +16,7 @@ dispatcher = updater.dispatcher
 
 class Player:
     player = None
+    station = None
 
 p = Player()
 
@@ -34,13 +35,27 @@ def station(name):
     if p.player:
         p.player.kill()
         p.player = None
+    p.station = name
     p.player = subprocess.Popen(["vlc", "-I", "dummy", soma_url])
+    
+def speak(bot, update, **args):
+    phrase = args.get("args")
+    subprocess.Popen(["espeak", "--", ",".join(phrase)])
+
+def songname(bot, update):
+    command = 'curl -s somafm.com/{}/ | grep "Now Playing" | cut -d ">" -f 3'.format(p.station)
+    song = subprocess.getoutput(command)
+    bot.sendMessage(chat_id=update.message.chat_id, text="{}: {}".format(p.station, song))
 
 somafm_handler = CommandHandler('somafm', somafm, pass_args=True)
+espeak_handler = CommandHandler('speak', speak, pass_args=True)
+songname_handler = CommandHandler('songname', songname)
+
 halp_handler = CommandHandler('halp', halp)
 
 dispatcher.add_handler(somafm_handler)
 dispatcher.add_handler(halp_handler)
+dispatcher.add_handler(espeak_handler)
+dispatcher.add_handler(songname_handler)
 
-if __name__ == '__main__':
-  updater.start_polling()
+updater.start_polling()
