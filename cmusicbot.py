@@ -64,6 +64,17 @@ def youtube(bot, update, **args):
     command = ["mpsyt", "playurl", u]
     p.player = subprocess.Popen(command)
 
+def soundcloud(bot, update, **args):
+	stop()
+	sc_url = args.get("args")[0]
+	res = sc_client.get('/resolve', url=sc_url)
+	stream_url = sc_client.get(res.stream_url, allow_redirects=False)
+	command = ["vlc", "-I", "dummy", stream_url.location]
+	p.player = subprocess.Popen(command)
+
+
+	
+
 def speak(bot, update, **args):
     phrase = args.get("args")
     subprocess.Popen(["espeak", "--", ",".join(phrase)])
@@ -93,6 +104,7 @@ songname_handler = CommandHandler('songname', songname)
 stop_handler = CommandHandler('stop', stop)
 resume_handler = CommandHandler('play', resume)
 url_handler = CommandHandler('youtube', youtube, pass_args=True)
+sc_handler = CommandHandler('sc', soundcloud, pass_args=True)
 
 halp_handler = CommandHandler('halp', halp)
 
@@ -104,6 +116,7 @@ dispatcher.add_handler(volume_handler)
 dispatcher.add_handler(stop_handler)
 dispatcher.add_handler(resume_handler)
 dispatcher.add_handler(url_handler)
+dispatcher.add_handler(sc_handler)
 
 updater.start_polling()
 
