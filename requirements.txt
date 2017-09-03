@@ -3,7 +3,6 @@ chardet==3.0.4
 fudge==1.1.0
 future==0.16.0
 idna==2.6
-pkg-resources==0.0.0
 python-telegram-bot==8.0
 requests==2.18.4
 simplejson==3.11.1
