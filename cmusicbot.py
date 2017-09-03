@@ -9,12 +9,18 @@ import subprocess
 
 import logging
 
+import soundcloud
+
+from local import CMUSICBOT_KEY, SOUNDCLOUD_CLIENT_ID
+
 SOMAFM_TEMPLATE = 'http://somafm.com/{}.pls'
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
 updater=Updater(token=CMUSICBOT_KEY) 
 dispatcher = updater.dispatcher
+
+sc_client = soundcloud.Client(client_id=SOUNDCLOUD_CLIENT_ID)
 
 class Player:
     player = None
@@ -101,15 +107,3 @@ dispatcher.add_handler(url_handler)
 
 updater.start_polling()
 
-def read_button():
-    import serial
-    s = serial.Serial('/dev/ttyACM0', 9600)
-    while True:
-        b = s.read_all()
-        if b and b[-1] == 1:
-            logging.info('button was pressed')
-            if p.player:
-                stop()
-            else:
-                resume()
-read_button()
